@@ -8,11 +8,6 @@ resource "aws_iam_user" "user" {
     }
 }
 
-resource "aws_iam_user_policy_attachment" "user-password" {
-  user       = aws_iam_user.user.name
-  policy_arn = "arn:aws:iam::aws:policy/IAMUserChangePassword"
-}
-
 resource "aws_iam_user_policy_attachment" "user-admin" {
   user       = aws_iam_user.user.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
