@@ -1,38 +1,23 @@
-data "aws_iam_policy_document" "assume_role_execution" {
-  statement {
-    effect = "Allow"
+resource "aws_iam_role" "ecs_task_execution" {
+  name = "ecsTaskExecutionRole"
 
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
+      Principal = {
+        Service = "ecs-tasks.amazonaws.com"
+      }
+    }]
+  })
 }
 
-resource "aws_iam_role" "execution" {
-  name               = "wsi-role-execution"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_execution.json
+resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
+  role       = aws_iam_role.ecs_task_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-data "aws_iam_policy_document" "execution" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "logs:*",
-      "ecr:*"
-    ]
-
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role_policy" "execution" {
-  role   = aws_iam_role.execution.name
-  policy = data.aws_iam_policy_document.execution.json
-}
 
 resource "aws_ecs_task_definition" "td" {
   family                   = "wsi-td"
@@ -40,8 +25,8 @@ resource "aws_ecs_task_definition" "td" {
   requires_compatibilities = ["EC2"]
   cpu                      = 512
   memory                   = 1024
-  execution_role_arn = aws_iam_role.execution.arn
-
+  execution_role_arn       = aws_iam_role.ecs_task_execution.arn
+  
   container_definitions = <<DEFINITION
 [
   {
@@ -59,14 +44,13 @@ resource "aws_ecs_task_definition" "td" {
     "healthCheck": {
       "command": [
         "CMD-SHELL",
-        "curl -fLs http://localhost:80/health > /dev/null || exit 1"
+        "curl -fLs http://localhost:80 > /dev/null"
       ],
-      "interval": 5,
-      "timeout": 2,
-      "retries": 1,
+      "interval": 30,
+      "timeout": 5,
+      "retries": 3,
       "startPeriod": 0
-    },
-    "essential": true
+    }
   }
 ]
 DEFINITION

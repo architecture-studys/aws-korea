@@ -1,12 +1,12 @@
 resource "aws_lb" "lb" {
-  name               = "wsi-alb"
+  name               = "wsi-ci-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb.id]
   subnets            = [aws_subnet.public_a.id, aws_subnet.public_b.id]
 
   tags = {
-    Name = "wsi-alb"
+    Name = "wsi-ci-alb"
   }
 }
 

@@ -1,10 +1,7 @@
-# EC2
-## AMI
 data "aws_ssm_parameter" "latest_ami" {
   name = "/aws/service/ami-amazon-linux-latest/al2023-ami-minimal-kernel-default-x86_64"
 }
 
-## Keypair
 resource "tls_private_key" "rsa" {
   algorithm = "RSA"
   rsa_bits = 4096
@@ -121,6 +118,6 @@ resource "aws_iam_role" "bastion" {
 }
 
 resource "aws_iam_instance_profile" "bastion" {
-  name = "wsi-profile-bastion${random_string.random.result}"
+  name = "wsi-profile-bastion-${random_string.random.result}"
   role = aws_iam_role.bastion.name
 }
