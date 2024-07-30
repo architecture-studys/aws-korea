@@ -18,6 +18,7 @@ resource "aws_s3_object" "appspec" {
   etag   = filemd5("./src/appspec.yml")
   content_type = "application/vnd.yaml"
 }
+
 resource "aws_s3_object" "buildspec" {
   bucket = aws_s3_bucket.app.id
   key    = "/buildspec.yaml"
