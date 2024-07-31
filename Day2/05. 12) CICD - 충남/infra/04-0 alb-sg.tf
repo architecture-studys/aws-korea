@@ -1,6 +1,6 @@
-resource "aws_security_group" "ecs" {
-  name = "wsi-ecs-sg"
-  vpc_id = aws_vpc.main.id
+resource "aws_security_group" "alb" {
+  name = "wsc2024-alb-sg"
+  vpc_id = aws_default_vpc.default.id
   
   ingress {
     protocol = "tcp"
@@ -17,7 +17,7 @@ resource "aws_security_group" "ecs" {
   }
   
   tags = {
-    Name = "wsi-ecs-sg"
+    Name = "wsc2024-alb-sg"
   }
 
   lifecycle {

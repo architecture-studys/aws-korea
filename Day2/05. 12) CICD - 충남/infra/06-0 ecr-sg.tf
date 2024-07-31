@@ -1,12 +1,12 @@
 resource "aws_security_group" "ecs" {
-  name = "wsi-ecs-sg"
-  vpc_id = aws_vpc.main.id
+  name = "wsc2024-ecs-sg"
+  vpc_id = aws_default_vpc.default.id
   
   ingress {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = "80"
-    to_port = "80"
+    from_port = "8080"
+    to_port = "8080"
   }
 
   egress {
@@ -17,7 +17,7 @@ resource "aws_security_group" "ecs" {
   }
   
   tags = {
-    Name = "wsi-ecs-sg"
+    Name = "wsc2024-ecs-sg"
   }
 
   lifecycle {

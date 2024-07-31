@@ -78,9 +78,14 @@ resource "aws_iam_role" "cloudtrail_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "cloudtrail_role_policy" {
+resource "aws_iam_role_policy_attachment" "cloudtrail_role_policy_cw" {
   role       = aws_iam_role.cloudtrail_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "cloudtrail_role_policy_trail" {
+  role       = aws_iam_role.cloudtrail_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSCloudTrail_FullAccess"
 }
 
 resource "aws_s3_bucket_policy" "trail" {

@@ -2,35 +2,9 @@ data "aws_ssm_parameter" "latest_ami" {
   name = "/aws/service/ami-amazon-linux-latest/al2023-ami-minimal-kernel-default-x86_64"
 }
 
-resource "tls_private_key" "rsa" {
-  algorithm = "RSA"
-  rsa_bits = 4096
-}
-
-resource "aws_key_pair" "keypair" {
-  key_name = "wsi"
-  public_key = tls_private_key.rsa.public_key_openssh
-}
-
-resource "local_file" "keypair" {
-  content = tls_private_key.rsa.private_key_pem
-  filename = "./wsi.pem"
-}
-
-resource "aws_eip" "bastion" {
-  instance = aws_instance.bastion.id
-  associate_with_private_ip = aws_instance.bastion.private_ip
-}
-
-data "aws_caller_identity" "current" {}
-
-locals {
-  aws_region = "ap-northeast-2"
-}
-
 resource "aws_instance" "bastion" {
   ami = data.aws_ssm_parameter.latest_ami.value
-  subnet_id = aws_subnet.public_a.id
+  subnet_id = aws_default_subnet.default_az1.id
   instance_type = "t3.small"
   key_name = aws_key_pair.keypair.key_name
   vpc_security_group_ids = [aws_security_group.bastion.id]
@@ -57,30 +31,26 @@ resource "aws_instance" "bastion" {
     yum install -y git
     echo "export AWS_DEFAULT_REGION=ap-northeast-2" >> ~/.bashrc
     source ~/.bashrc
-    mkdir ~/wsi-commit
-    sudo chown ec2-user:ec2-user ~/wsi-commit
-    su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.app.id}/ ~/wsi-commit --recursive'
+    mkdir ~/wsc2024-cci
+    sudo chown ec2-user:ec2-user ~/wsc2024-cci
+    su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.app.id}/ ~/wsc2024-cci --recursive'
     su - ec2-user -c 'git config --global credential.helper "!aws codecommit credential-helper $@"'
     su - ec2-user -c 'git config --global credential.UseHttpPath true'
-    su - ec2-user -c 'cd ~/wsi-commit && git init && git add .'
-    su - ec2-user -c 'cd ~/wsi-commit && git commit -m "day2"'
-    su - ec2-user -c 'cd ~/wsi-commit && git branch main'
-    su - ec2-user -c 'cd ~/wsi-commit && git checkout main'
-    su - ec2-user -c 'cd ~/wsi-commit && git branch -d master'
-    su - ec2-user -c 'cd ~/wsi-commit && git remote add origin ${aws_codecommit_repository.commit.clone_url_http}'
-    su - ec2-user -c 'cd ~/wsi-commit && git push origin main'
+    su - ec2-user -c 'cd ~/wsc2024-cci && git init && git add .'
+    su - ec2-user -c 'cd ~/wsc2024-cci && git commit -m "day2"'
+    su - ec2-user -c 'cd ~/wsc2024-cci && git remote add origin ${aws_codecommit_repository.commit.clone_url_http}'
+    su - ec2-user -c 'cd ~/wsc2024-cci && git push origin master'
     aws s3 rm s3://${aws_s3_bucket.app.id} --recursive
     aws s3 rb s3://${aws_s3_bucket.app.id} --force
   EOF
-  
   tags = {
-    Name = "wsi-bastion"
+    Name = "wsc2024-bastion-ec2"
   }
 }
 
 resource "aws_security_group" "bastion" {
-  name = "wsi-bastion-sg"
-  vpc_id = aws_vpc.main.id
+  name = "wsc2024-bastion-sg"
+  vpc_id = aws_default_vpc.default.id
 
   ingress {
     protocol = "tcp"
@@ -92,32 +62,25 @@ resource "aws_security_group" "bastion" {
   egress {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = "443"
-    to_port = "443"
+    from_port = "80"
+    to_port = "80"
   }
 
   egress {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = "80"
-    to_port = "80"
+    from_port = "443"
+    to_port = "443"
   }
 
-  tags = {
-    Name = "wsi-bastion-sg"
+    tags = {
+    Name = "wsc2024-bastion-sg"
   }
 }
 
-resource "random_string" "random" {
-  length           = 5
-  upper            = false
-  lower            = false
-  numeric          = true
-  special          = false
-}
 
 resource "aws_iam_role" "bastion" {
-  name = "wsi-role-bastion"
+  name = "wsc2024-bastion-role"
   
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -137,6 +100,6 @@ resource "aws_iam_role" "bastion" {
 }
 
 resource "aws_iam_instance_profile" "bastion" {
-  name = "wsi-profile-bastion-${random_string.random.result}"
+  name = "wsc2024-profile-bastion"
   role = aws_iam_role.bastion.name
 }

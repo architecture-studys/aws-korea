@@ -32,6 +32,7 @@ resource "aws_s3_object" "Docker" {
   source = "./src/Dockerfile"
   etag   = filemd5("./src/Dockerfile")
 }
+
 resource "aws_s3_object" "app" {
   bucket = aws_s3_bucket.app.id
   key    = "/src/app.py"

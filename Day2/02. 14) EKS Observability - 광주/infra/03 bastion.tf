@@ -33,29 +33,21 @@ resource "aws_instance" "bastion" {
     usermod -aG docker ec2-user
     usermod -aG docker root
     chmod 666 /var/run/docker.sock
-    curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-    sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-    rm -rf argocd-linux-amd64
-    yum install -y git
     HOME=/home/ec2-user
     echo "export AWS_ACCOUNT_ID=${data.aws_caller_identity.caller.account_id}" >> ~/.bashrc
     echo "export AWS_DEFAULT_REGION=ap-northeast-2" >> ~/.bashrc
     source ~/.bashrc
-    mkdir ~/gwangju-application-repo
+    mkdir ~/image
     mkidr ~/eks
-    sudo chown ec2-user:ec2-user ~/gwangju-application-repo
-    su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.app.id}/ ~/gwangju-application-repo --recursive'
+    su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.app.id}/ ~/image --recursive'
     su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.manifest.id}/ ~/eks --recursive'
-    su - ec2-user -c 'git config --global credential.helper "!aws codecommit credential-helper $@"'
-    su - ec2-user -c 'git config --global credential.UseHttpPath true'
-    su - ec2-user -c 'sed -i "s|ACCOUNT_ID|${data.aws_caller_identity.caller.account_id}|g" ~/gwangju-application-repo/deployment.yaml'
-    su - ec2-user -c 'cd ~/gwangju-application-repo && git init && git add .'
-    su - ec2-user -c 'cd ~/gwangju-application-repo && git commit -m "day2"'
-    su - ec2-user -c 'cd ~/gwangju-application-repo && git remote add origin ${aws_codecommit_repository.commit.clone_url_http}'
-    su - ec2-user -c 'cd ~/gwangju-application-repo && git push origin master'
     aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${data.aws_caller_identity.caller.account_id}.dkr.ecr.ap-northeast-2.amazonaws.com
-    docker build -t ${aws_ecr_repository.CICD-ecr.repository_url}:latest ~/gwangju-application-repo
-    docker push ${aws_ecr_repository.CICD-ecr.repository_url}:latest
+    docker build -t ${aws_ecr_repository.ecr.repository_url}:a ~/image/service-a/
+    docker build -t ${aws_ecr_repository.ecr.repository_url}:a ~/image/service-b/
+    docker build -t ${aws_ecr_repository.ecr.repository_url}:a ~/image/service-c/
+    docker push ${aws_ecr_repository.ecr.repository_url}:a
+    docker push ${aws_ecr_repository.ecr.repository_url}:b
+    docker push ${aws_ecr_repository.ecr.repository_url}:c
     aws s3 rm s3://${aws_s3_bucket.app.id} --recursive
     aws s3 rb s3://${aws_s3_bucket.app.id} --force
     aws s3 rm s3://${aws_s3_bucket.manifest.id} --recursive
