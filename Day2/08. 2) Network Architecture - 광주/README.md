@@ -1,4 +1,4 @@
-## 02) Network Architecture Module 광주
+## 02) Network Architecture Module - 광주
 ### Code List
 ```shell
 ├── 00 provider.tf

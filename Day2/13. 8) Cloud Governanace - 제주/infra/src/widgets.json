@@ -12,7 +12,7 @@
                         "ssm-connection",
                         "ssm-connection",
                         {
-                            "label": "ssm-connection: ${LAST}"
+                            "label": "SSM Access: ${LAST}"
                         }
                     ]
                 ],

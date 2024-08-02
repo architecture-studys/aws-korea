@@ -1,4 +1,4 @@
-## 12) CI/CD Module 경북
+## 12) CI/CD Module - 충남
 ### Code List
 ```shell
 ├── src

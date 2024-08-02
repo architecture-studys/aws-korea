@@ -1,4 +1,4 @@
-## 14) EKS Observability Module 광주
+## 14) EKS Observability Module - 광주
 ### Code List
 ```shell
 ├── manifest

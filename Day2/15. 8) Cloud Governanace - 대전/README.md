@@ -1,4 +1,4 @@
-## 08) Cloud Governanace 
+## 08) Cloud Governanace - 대전
 ### Code List
 ```shell
 ├── src

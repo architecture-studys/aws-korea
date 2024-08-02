@@ -1,4 +1,4 @@
-## 12) CICD Module 광주
+## 12) CICD Module - 광주
 ### Code List
 ```shell
 ├── manifest
