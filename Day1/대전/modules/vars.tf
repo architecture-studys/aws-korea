@@ -10,3 +10,7 @@ variable "destination_region" {
 variable "key_name" {
   type = string
 }
+
+variable "ecr_url" {
+  type = string
+}

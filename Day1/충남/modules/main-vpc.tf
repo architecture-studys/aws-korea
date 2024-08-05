@@ -9,9 +9,6 @@ resource "aws_vpc" "ma" {
   }
 }
 
-# Public
-
-## Internet Gateway
 resource"aws_internet_gateway" "ma" {
   vpc_id = aws_vpc.ma.id
 
@@ -20,7 +17,6 @@ resource"aws_internet_gateway" "ma" {
   }
 }
 
-## Route Table
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.ma.id
 
@@ -49,7 +45,6 @@ resource "aws_route" "public_tgw_storage" {
   depends_on = [ aws_ec2_transit_gateway.example,aws_ec2_transit_gateway_vpc_attachment.ma ]
 }
 
-## Public Subnet
 resource "aws_subnet" "public_a" {
   vpc_id = aws_vpc.ma.id
   cidr_block = "10.0.0.0/24"
@@ -61,13 +56,11 @@ resource "aws_subnet" "public_a" {
   }
 }
 
-## Attach Public Subnet in Route Table
 resource "aws_route_table_association" "public_a" {
   subnet_id = aws_subnet.public_a.id
   route_table_id = aws_route_table.public.id
 }
 
-## Public Subnet
 resource "aws_subnet" "public_b" {
   vpc_id = aws_vpc.ma.id
   cidr_block = "10.0.1.0/24"
@@ -79,7 +72,6 @@ resource "aws_subnet" "public_b" {
   }
 }
 
-## Attach Public Subnet in Route Table
 resource "aws_route_table_association" "public_b" {
   subnet_id = aws_subnet.public_b.id
   route_table_id = aws_route_table.public.id
@@ -138,9 +130,6 @@ resource "aws_iam_role_policy" "role" {
   policy = data.aws_iam_policy_document.policy.json
 }
 
-
-# EC2
-## AMI
 data "aws_ami" "amazonlinux2023" {
   most_recent = true
 
@@ -154,10 +143,9 @@ data "aws_ami" "amazonlinux2023" {
     values = ["hvm"]
   }
 
-  owners = ["137112412989"] # Amazon's official account ID
+  owners = ["137112412989"]
 }
 
-## Keypair
 resource "tls_private_key" "rsa" {
   algorithm = "RSA"
   rsa_bits = 4096
@@ -178,7 +166,6 @@ resource "aws_eip" "bastion" {
   associate_with_private_ip = aws_instance.bastion.private_ip
 }
 
-## Public EC2
 resource "aws_instance" "bastion" {
   ami = data.aws_ami.amazonlinux2023.id
   subnet_id = aws_subnet.public_a.id
@@ -219,7 +206,6 @@ resource "aws_instance" "bastion" {
   }
 }
 
-## Public Security Group
 resource "aws_security_group" "bastion" {
   name = "wsc2024-bastion-sg"
   vpc_id = aws_vpc.ma.id
@@ -280,7 +266,6 @@ resource "aws_security_group" "lattice" {
   }
 }
 
-## IAM
 resource "aws_iam_role" "bastion" {
   name = "wsc2024-bastion-role"
   

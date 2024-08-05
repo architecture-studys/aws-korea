@@ -1,5 +1,5 @@
-resource "aws_security_group" "ep" {
-  name = "wsc2024-EP-SG"
+resource "aws_security_group" "prod-ep" {
+  name = "wsc2024-prod-EP-SG"
   vpc_id = aws_vpc.prod.id
 
   ingress {
@@ -17,9 +17,33 @@ resource "aws_security_group" "ep" {
   }
  
     tags = {
-    Name = "wsc2024-EP-SG"
+    Name = "wsc2024-prod-EP-SG"
   }
 }
+
+resource "aws_security_group" "ma-ep" {
+  name = "wsc2024-ma-EP-SG"
+  vpc_id = aws_vpc.ma.id
+
+  ingress {
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = "443"
+    to_port = "443"
+  }
+
+  egress {
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = "0"
+    to_port = "0"
+  }
+ 
+    tags = {
+    Name = "wsc2024-ma-EP-SG"
+  }
+}
+
 
 resource "aws_vpc_endpoint" "ecr" {
   vpc_id            = aws_vpc.prod.id
@@ -44,7 +68,7 @@ resource "aws_vpc_endpoint_subnet_association" "prod_b" {
 }
 
 resource "aws_vpc_endpoint" "s3_ep" {
-  vpc_id            = aws_vpc.prod.id
+  vpc_id            = aws_vpc.ma.id
   service_name      = "com.amazonaws.us-east-1.s3"
   vpc_endpoint_type = "Gateway"
   policy = jsonencode({
@@ -78,10 +102,10 @@ resource "aws_vpc_endpoint" "s3_ep" {
 }
 
 resource "aws_vpc_endpoint_subnet_association" "prod_a1" {
-  vpc_endpoint_id = aws_vpc_endpoint.ecr.id
-  subnet_id       = aws_subnet.private_a.id
+  vpc_endpoint_id = aws_vpc_endpoint.s3_ep.id
+  subnet_id       = aws_subnet.public_a.id
 }
 resource "aws_vpc_endpoint_subnet_association" "prod_b1 " {
-  vpc_endpoint_id = aws_vpc_endpoint.ecr.id
-  subnet_id       = aws_subnet.private_b.id
+  vpc_endpoint_id = aws_vpc_endpoint.s3_ep.id
+  subnet_id       = aws_subnet.public_b.id
 }
