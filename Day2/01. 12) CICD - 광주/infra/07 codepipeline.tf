@@ -3,7 +3,7 @@ variable "file_name" {
   default     = "imagedefinitions.json"
 }
 
-resource "aws_codepipeline" "pipeline" {
+resource "aws_codepipeline" "gwangju-cicd-pipeline" {
   name     = "pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
 
@@ -24,7 +24,7 @@ resource "aws_codepipeline" "pipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
-        RepositoryName = aws_codecommit_repository.commit.repository_name
+        RepositoryName = aws_codecommit_repository.gwangju-cicd-commit.repository_name
         BranchName = "master"
         PollForSourceChanges = "false"
         OutputArtifactFormat = "CODE_ZIP"
@@ -45,18 +45,18 @@ resource "aws_codepipeline" "pipeline" {
       version          = "1"
 
       configuration = {
-        ProjectName = aws_codebuild_project.build.name
+        ProjectName = aws_codebuild_project.gwangju-cicd-build.name
       }
     }
   }
 }
 
-resource "aws_s3_bucket" "pipeline" {
+resource "aws_s3_bucket" "gwangju-cicd-pipeline" {
   bucket_prefix = "gwangju-artifacts"
   force_destroy = true
 }
 
-data "aws_iam_policy_document" "assume_role_pipeline" {
+data "aws_iam_policy_document" "gwangju-cicd-assume_role_pipeline" {
   statement {
     effect = "Allow"
 
@@ -69,12 +69,12 @@ data "aws_iam_policy_document" "assume_role_pipeline" {
   }
 }
 
-resource "aws_iam_role" "codepipeline_role" {
+resource "aws_iam_role" gwangju-cicd-"codepipeline_role" {
   name               = "gwangju-role-codepipeline"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_pipeline.json
+  assume_role_policy = data.aws_iam_policy_document.gwangju-cicd-assume_role_pipeline.json
 }
 
-data "aws_iam_policy_document" "codepipeline_policy" {
+data "aws_iam_policy_document" "gwangju-cicd-codepipeline_policy" {
   statement {
     effect = "Allow"
 
@@ -93,20 +93,20 @@ data "aws_iam_policy_document" "codepipeline_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "codepipeline_policy" {
+resource "aws_iam_role_policy" gwangju-cicd-"codepipeline_policy" {
   name   = "codepipeline_policy"
-  role   = aws_iam_role.codepipeline_role.id
-  policy = data.aws_iam_policy_document.codepipeline_policy.json
+  role   = aws_iam_role.gwangju-cicd-codepipeline_role.id
+  policy = data.aws_iam_policy_document.gwangju-cicd-codepipeline_policy.json
 }
 
-resource "aws_cloudwatch_event_rule" "event" {
+resource "aws_cloudwatch_event_rule" "gwangju-cicd-event" {
   name = "gwangju-ci-event"
 
   event_pattern = <<EOF
 {
   "source": [ "aws.codecommit" ],
   "detail-type": [ "CodeCommit Repository State Change" ],
-  "resources": [ "${aws_codecommit_repository.commit.arn}" ],
+  "resources": [ "${aws_codecommit_repository.gwangju-cicd-commit.arn}" ],
   "detail": {
      "event": [
        "referenceCreated",
@@ -119,14 +119,14 @@ resource "aws_cloudwatch_event_rule" "event" {
 EOF
 }
 
-resource "aws_cloudwatch_event_target" "event" {
+resource "aws_cloudwatch_event_target" "gwangju-cicd-event" {
   target_id = "gwangju-ci-event-target"
-  rule = aws_cloudwatch_event_rule.event.name
-  arn = aws_codepipeline.pipeline.arn
-  role_arn = aws_iam_role.ci.arn
+  rule = aws_cloudwatch_event_rule.gwangju-cicd-event.name
+  arn = aws_codepipeline.gwangju-cicd-pipeline.arn
+  role_arn = aws_iam_role.gwangju-cicd-ci.arn
 }
 
-resource "aws_iam_role" "ci" {
+resource "aws_iam_role" "gwangju-cicd-ci" {
   name = "gwangju-ci"
   assume_role_policy = <<EOF
 {
@@ -145,7 +145,7 @@ resource "aws_iam_role" "ci" {
 EOF
 }
 
-data "aws_iam_policy_document" "ci" {
+data "aws_iam_policy_document" "gwangju-cicd-ci" {
   statement {
     actions = [
       "iam:PassRole",
@@ -156,12 +156,12 @@ data "aws_iam_policy_document" "ci" {
   }
 }
 
-resource "aws_iam_policy" "ci" {
+resource "aws_iam_policy" "gwangju-cicd-ci" {
   name = "gwangju-ci-policy"
-  policy = data.aws_iam_policy_document.ci.json
+  policy = data.aws_iam_policy_document.gwangju-cicd-ci.json
 }
 
-resource "aws_iam_role_policy_attachment" "ci" {
-  policy_arn = aws_iam_policy.ci.arn
-  role = aws_iam_role.ci.name
+resource "aws_iam_role_policy_attachment" "gwangju-cicd-ci" {
+  policy_arn = aws_iam_policy.gwangju-cicd-ci.arn
+  role = aws_iam_role.gwangju-cicd-ci.name
 }

@@ -1,4 +1,4 @@
-resource "aws_ecr_repository" "CICD-ecr" {
+resource "aws_ecr_repository" "gwangju-cicd-ecr" {
   name = "gwangju-repo"
   
   tags = {

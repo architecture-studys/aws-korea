@@ -1,15 +1,15 @@
-data "aws_ssm_parameter" "latest_ami" {
+data "aws_ssm_parameter" "gwangju-cicd-latest_ami" {
   name = "/aws/service/ami-amazon-linux-latest/al2023-ami-minimal-kernel-default-x86_64"
 }
 
 resource "aws_instance" "bastion" {
-  ami = data.aws_ssm_parameter.latest_ami.value
-  subnet_id = aws_subnet.public_a.id
+  ami = data.aws_ssm_parameter.gwangju-cicd-latest_ami.value
+  subnet_id = aws_subnet.gwangju-cicd-public_a.id
   instance_type = "t3.small"
-  key_name = aws_key_pair.keypair.key_name
-  vpc_security_group_ids = [aws_security_group.bastion.id]
+  key_name = aws_key_pair.gwangju-cicd-keypair.key_name
+  vpc_security_group_ids = [aws_security_group.gwangju-cicd-bastion.id]
   associate_public_ip_address = true
-  iam_instance_profile = aws_iam_instance_profile.bastion.name
+  iam_instance_profile = aws_iam_instance_profile.gwangju-cicd-bastion.name
   user_data = <<-EOF
     #!/bin/bash
     yum update -y
@@ -44,22 +44,22 @@ resource "aws_instance" "bastion" {
     mkdir ~/gwangju-application-repo
     mkidr ~/eks
     sudo chown ec2-user:ec2-user ~/gwangju-application-repo
-    su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.app.id}/ ~/gwangju-application-repo --recursive'
-    su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.manifest.id}/ ~/eks --recursive'
+    su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.gwangju-cicd-app.id}/ ~/gwangju-application-repo --recursive'
+    su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.gwangju-cicd-manifest.id}/ ~/eks --recursive'
     su - ec2-user -c 'git config --global credential.helper "!aws codecommit credential-helper $@"'
     su - ec2-user -c 'git config --global credential.UseHttpPath true'
     su - ec2-user -c 'sed -i "s|ACCOUNT_ID|${data.aws_caller_identity.caller.account_id}|g" ~/gwangju-application-repo/deployment.yaml'
     su - ec2-user -c 'cd ~/gwangju-application-repo && git init && git add .'
     su - ec2-user -c 'cd ~/gwangju-application-repo && git commit -m "day2"'
-    su - ec2-user -c 'cd ~/gwangju-application-repo && git remote add origin ${aws_codecommit_repository.commit.clone_url_http}'
+    su - ec2-user -c 'cd ~/gwangju-application-repo && git remote add origin ${aws_codecommit_repository.gwangju-cicd-commit.clone_url_http}'
     su - ec2-user -c 'cd ~/gwangju-application-repo && git push origin master'
     aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${data.aws_caller_identity.caller.account_id}.dkr.ecr.ap-northeast-2.amazonaws.com
-    docker build -t ${aws_ecr_repository.CICD-ecr.repository_url}:latest ~/gwangju-application-repo
-    docker push ${aws_ecr_repository.CICD-ecr.repository_url}:latest
-    aws s3 rm s3://${aws_s3_bucket.app.id} --recursive
-    aws s3 rb s3://${aws_s3_bucket.app.id} --force
-    aws s3 rm s3://${aws_s3_bucket.manifest.id} --recursive
-    aws s3 rb s3://${aws_s3_bucket.manifest.id} --force
+    docker build -t ${aws_ecr_repository.gwangju-cicd-ecr.repository_url}:latest ~/gwangju-application-repo
+    docker push ${aws_ecr_repository.gwangju-cicd-ecr.repository_url}:latest
+    aws s3 rm s3://${aws_s3_bucket.gwangju-cicd-app.id} --recursive
+    aws s3 rb s3://${aws_s3_bucket.gwangju-cicd-app.id} --force
+    aws s3 rm s3://${aws_s3_bucket.gwangju-cicd-manifest.id} --recursive
+    aws s3 rb s3://${aws_s3_bucket.gwangju-cicd-manifest.id} --force
     public_a=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=gwangju-public-a" --query "Subnets[].SubnetId[]" --output text)
     public_b=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=gwangju-public-b" --query "Subnets[].SubnetId[]" --output text)
     private_a=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=gwangju-private-a" --query "Subnets[].SubnetId[]" --output text)
@@ -75,9 +75,9 @@ resource "aws_instance" "bastion" {
   }
 }
 
-resource "aws_security_group" "bastion" {
+resource "aws_security_group" "gwangju-cicd-bastion" {
   name = "gwangju-ec2-SG"
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.gwangju-cicd-main.id
 
   ingress {
     protocol = "tcp"
@@ -112,7 +112,7 @@ resource "aws_security_group" "bastion" {
   }
 }
 
-resource "aws_iam_role" "bastion" {
+resource "aws_iam_role" "gwangju-cicd-bastion" {
   name = "gwangju-role-bastion"
   
   assume_role_policy = jsonencode({
@@ -132,7 +132,7 @@ resource "aws_iam_role" "bastion" {
   managed_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
 }
 
-resource "aws_iam_instance_profile" "bastion" {
+resource "aws_iam_instance_profile" "gwangju-cicd-bastion" {
   name = "gwangju-profile-bastion"
-  role = aws_iam_role.bastion.name
+  role = aws_iam_role.gwangju-cicd-bastion.name
 }

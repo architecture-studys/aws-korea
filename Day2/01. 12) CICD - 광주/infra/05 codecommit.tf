@@ -1,4 +1,4 @@
-resource "aws_codecommit_repository" "commit" {
+resource "aws_codecommit_repository" "gwangju-cicd-commit" {
     repository_name = "gwangju-application-repo"
     default_branch = "master"
     

@@ -1,4 +1,4 @@
-data "aws_iam_policy_document" "assume_role_build" {
+data "aws_iam_policy_document" "gwangju-cicd-assume_role_build" {
   statement {
     effect = "Allow"
 
@@ -11,12 +11,12 @@ data "aws_iam_policy_document" "assume_role_build" {
   }
 }
 
-resource "aws_iam_role" "build" {
+resource "aws_iam_role" "gwangju-cicd-build" {
   name               = "codebuild-role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_build.json
+  assume_role_policy = data.aws_iam_policy_document.gwangju-cicd-assume_role_build.json
 }
 
-data "aws_iam_policy_document" "build" {
+data "aws_iam_policy_document" "gwangju-cicd-build" {
   statement {
     effect = "Allow"
 
@@ -32,14 +32,14 @@ data "aws_iam_policy_document" "build" {
   }
 }
 
-resource "aws_iam_role_policy" "build" {
-  role   = aws_iam_role.build.name
-  policy = data.aws_iam_policy_document.build.json
+resource "aws_iam_role_policy" "gwangju-cicd-build" {
+  role   = aws_iam_role.gwangju-cicd-build.name
+  policy = data.aws_iam_policy_document.gwangju-cicd-build.json
 }
 
-resource "aws_codebuild_project" "build" {
+resource "aws_codebuild_project" "gwangju-cicd-build" {
   name          = "wsi-build"
-  service_role  = aws_iam_role.build.arn
+  service_role  = aws_iam_role.gwangju-cicd-build.arn
 
   artifacts {
     type = "CODEPIPELINE"
