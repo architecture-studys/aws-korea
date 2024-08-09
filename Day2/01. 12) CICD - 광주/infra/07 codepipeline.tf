@@ -5,11 +5,11 @@ variable "file_name" {
 
 resource "aws_codepipeline" "gwangju-cicd-pipeline" {
   name     = "pipeline"
-  role_arn = aws_iam_role.codepipeline_role.arn
+  role_arn = aws_iam_role.gwangju-cicd-codepipeline_role.arn
 
   artifact_store {
     type     = "S3"
-    location = aws_s3_bucket.pipeline.bucket
+    location = aws_s3_bucket.gwangju-cicd-pipeline.bucket
   }
 
   stage {
@@ -69,7 +69,7 @@ data "aws_iam_policy_document" "gwangju-cicd-assume_role_pipeline" {
   }
 }
 
-resource "aws_iam_role" gwangju-cicd-"codepipeline_role" {
+resource "aws_iam_role" "gwangju-cicd-codepipeline_role" {
   name               = "gwangju-role-codepipeline"
   assume_role_policy = data.aws_iam_policy_document.gwangju-cicd-assume_role_pipeline.json
 }
@@ -93,7 +93,7 @@ data "aws_iam_policy_document" "gwangju-cicd-codepipeline_policy" {
   }
 }
 
-resource "aws_iam_role_policy" gwangju-cicd-"codepipeline_policy" {
+resource "aws_iam_role_policy" "gwangju-cicd-codepipeline_policy" {
   name   = "codepipeline_policy"
   role   = aws_iam_role.gwangju-cicd-codepipeline_role.id
   policy = data.aws_iam_policy_document.gwangju-cicd-codepipeline_policy.json
