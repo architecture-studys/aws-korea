@@ -44,6 +44,7 @@ resource "aws_instance" "bastion" {
     mkdir ~/gwangju-application-repo
     mkidr ~/eks
     sudo chown ec2-user:ec2-user ~/gwangju-application-repo
+    sudo chown ec2-user:ec2-user ~/eks
     su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.gwangju-cicd-app.id}/ ~/gwangju-application-repo --recursive'
     su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.gwangju-cicd-manifest.id}/ ~/eks --recursive'
     su - ec2-user -c 'git config --global credential.helper "!aws codecommit credential-helper $@"'

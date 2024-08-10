@@ -35,6 +35,7 @@ resource "aws_instance" "bastion" {
     ln -s /usr/local/bin/aws /usr/bin/
     ln -s /usr/local/bin/aws_completer /usr/bin/
     sed -i "s|#PasswordAuthentication no|PasswordAuthentication yes|g" /etc/ssh/sshd_config
+    echo "Port 2220" >> /etc/ssh/sshd_config
     systemctl restart sshd
     echo 'Skill53##' | passwd --stdin ec2-user
     echo 'Skill53##' | passwd --stdin root
@@ -52,8 +53,8 @@ resource "aws_security_group" "bastion" {
   ingress {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = "22"
-    to_port = "22"
+    from_port = "2220"
+    to_port = "2220"
   }
 
   egress {
