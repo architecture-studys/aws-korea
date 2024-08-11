@@ -23,8 +23,8 @@ resource "aws_security_group" "db" {
 }
 
 resource "aws_security_group" "db-proxy" {
-  name        = "apdev-RDS-SG"
-  description = "apdev-RDS-SG"
+  name        = "apdev-RDS-Proxy-SG"
+  description = "apdev-RDS-Proxy-SG"
   vpc_id      = aws_vpc.main.id
 
   ingress {
