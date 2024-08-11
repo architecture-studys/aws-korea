@@ -179,8 +179,8 @@ resource "aws_secretsmanager_secret_version" "db" {
     "host"     = aws_db_instance.db.address,
     "port"     = aws_db_instance.db.port,
     "dbname"   = aws_db_instance.db.db_name,
-    "proxy_host" = aws_db_proxy.db.address,
-    "proxy_port" = aws_db_proxy.db.port
+    "proxy_host" = aws_db_proxy.db.endpoint,
+    "proxy_port" = "3306"
   })
 }
 
