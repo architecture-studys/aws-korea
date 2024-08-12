@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  token:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - MYSQL_USER=dbusername
+      - MYSQL_PASSWORD=dbpassword
+      - MYSQL_HOST=dbhost
+      - MYSQL_PORT=dbport
+      - MYSQL_DBNAME=dbname
+    ports:
+      - "8080:8080"
