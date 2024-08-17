@@ -21,30 +21,6 @@ resource "aws_security_group" "prod-ep" {
   }
 }
 
-resource "aws_security_group" "ma-ep" {
-  name = "wsc2024-ma-EP-SG"
-  vpc_id = aws_vpc.ma.id
-
-  ingress {
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port = "443"
-    to_port = "443"
-  }
-
-  egress {
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port = "0"
-    to_port = "0"
-  }
- 
-    tags = {
-    Name = "wsc2024-ma-EP-SG"
-  }
-}
-
-
 resource "aws_vpc_endpoint" "ecr" {
   vpc_id            = aws_vpc.prod.id
   service_name      = "com.amazonaws.us-east-1.ecr.dkr"
@@ -76,7 +52,7 @@ resource "aws_vpc_endpoint" "s3_ep" {
     "Statement" : [
       {
         "Sid" : "AllowAll",
-        "Effect" : "Allow",
+        "Effect" : "Demy",
         "Principal": "*",
         "Action" : "s3:*",
         "Resource": "arn:aws:s3:::prod-us-east-1-starport-layer-bucket/*",
@@ -85,13 +61,6 @@ resource "aws_vpc_endpoint" "s3_ep" {
             "aws:SourceIp": "${aws_instance.bastion.private_ip}/32"
             }
           }
-      },
-      {
-        "Sid" : "AllowAll",
-        "Effect" : "Allow",
-        "Principal": "*",
-        "Action" : "s3:*",
-        "Resource": "*"
       }
     ]
   })
@@ -101,11 +70,7 @@ resource "aws_vpc_endpoint" "s3_ep" {
   }
 }
 
-resource "aws_vpc_endpoint_subnet_association" "prod_a1" {
+resource "aws_vpc_endpoint_route_table_association" "ma" {
+  route_table_id  = aws_route_table.public.id
   vpc_endpoint_id = aws_vpc_endpoint.s3_ep.id
-  subnet_id       = aws_subnet.public_a.id
-}
-resource "aws_vpc_endpoint_subnet_association" "prod_b1 " {
-  vpc_endpoint_id = aws_vpc_endpoint.s3_ep.id
-  subnet_id       = aws_subnet.public_b.id
 }

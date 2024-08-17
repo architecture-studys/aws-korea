@@ -27,7 +27,7 @@ resource "aws_kms_key" "s3" {
         Resource = "*"
         Condition = {
           StringEquals = {
-            "AWS:SourceArn" = "arn:aws:cloudfront::${data.aws_caller_identity.s3_current.account_id}:distribution/${aws_cloudfront_distribution.cf_dist.id}"
+            "AWS:SourceArn" = "arn:aws:cloudfront::${data.aws_caller_identity.s3_current.account_id}:distribution/${aws_cloudfront_distribution.cf.id}"
           }
         }
       }

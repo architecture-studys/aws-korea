@@ -75,6 +75,9 @@ resource "aws_kms_key" "kms" {
   tags = {
     Name = "s3-kms"
   }
+  depends_on = [
+    aws_cloudfront_distribution.cf
+  ]
 }
 
 resource "aws_kms_alias" "kms" {
