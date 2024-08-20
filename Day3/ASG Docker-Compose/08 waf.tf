@@ -1,9 +1,9 @@
 resource "aws_wafv2_web_acl" "waf" {
-  # provider = aws.us-east-1
+  provider = aws.us-east-1
 
   name  = "apdev-waf"
-  scope = "REGIONAL"
-  # scope = "CLOUDFRONT"
+  # scope = "REGIONAL"
+  scope = "CLOUDFRONT"
 
   default_action {
     block {
@@ -468,7 +468,7 @@ resource "aws_wafv2_web_acl" "waf" {
 }
 
 
-resource "aws_wafv2_web_acl_association" "waf" {
-  resource_arn = aws_lb.alb.arn
-  web_acl_arn  = aws_wafv2_web_acl.waf.arn
-}
+# resource "aws_wafv2_web_acl_association" "waf" {
+#   resource_arn = aws_lb.alb.arn
+#   web_acl_arn  = aws_wafv2_web_acl.waf.arn
+# }

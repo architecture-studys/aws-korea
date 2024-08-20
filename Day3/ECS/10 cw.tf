@@ -29,7 +29,7 @@ resource "aws_cloudwatch_dashboard" "cw" {
             ],
             [
               {
-                "expression": "((((${var.rds_total_memory}-freeableMemory) / 1024) / 1024) /1024) * 100", 
+                "expression": "((((${var.rds_total_memory}-m1) / 1024) / 1024) /1024) * 100", 
                 "label": "Memory Utilization: ${var.env}{LAST}",
                 "id": "e1"
               }
@@ -60,7 +60,7 @@ resource "aws_cloudwatch_dashboard" "cw" {
             ],
             [
               {
-                "expression": "((((${var.rds_total_memory}-freeableMemory) / 1024) / 1024) /1024) * 100",
+                "expression": "((((${var.rds_total_memory}-m1) / 1024) / 1024) /1024) * 100",
                 "label": "Memory Utilization: ${var.env}{LAST}",
                 "id": "e1"
               }
@@ -83,8 +83,8 @@ resource "aws_cloudwatch_dashboard" "cw" {
       },
       {
         type   = "metric",
-        x      = 0,
-        y      = 0,
+        x      = 5,
+        y      = 5,
         width  = 5,
         height = 5,
         properties = {
@@ -110,7 +110,40 @@ resource "aws_cloudwatch_dashboard" "cw" {
       {
         type   = "metric",
         x      = 5,
-        y      = 5,
+        y      = 10,
+        width  = 5,
+        height = 5,
+        properties = {
+          metrics = [
+            [
+              "AWS/RDS",
+              "CPUUtilization",
+              "DBInstanceIdentifier",
+              "${aws_db_instance.db.identifier}",
+              {
+                "label": "RDS_CPU: ${var.env}{LAST}"
+              }
+            ]
+          ],
+          view = "gauge",
+          stacked = true,
+          period = 30,
+          stat   = "Average",
+          region = "${data.aws_region.cloudwatch.name}",
+          title  = "RDS_CPU"
+          setPeriodToTimeRange = true
+          yAxis  = { 
+            left = {
+              min = 0,
+              max = 100,
+            }
+          }
+        }
+      },
+      {
+        type   = "metric",
+        x      = 5,
+        y      = 0,
         width  = 5,
         height = 5,
         properties = {
@@ -140,7 +173,7 @@ resource "aws_cloudwatch_dashboard" "cw" {
       },
       {
         type   = "metric",
-        x      = 5,
+        x      = 0,
         y      = 0,
         width  = 5,
         height = 5,
