@@ -32,3 +32,12 @@ data "aws_iam_role" "example" {
   name = "<Role Name>"
 }
 ```
+
+<br>
+
+### IAM Role Profile
+```
+data "aws_iam_instance_profile" "example" {
+  name = "<Profile Name>"
+}
+```
