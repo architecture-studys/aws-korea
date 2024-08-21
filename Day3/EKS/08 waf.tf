@@ -1,9 +1,9 @@
 resource "aws_wafv2_web_acl" "waf" {
-  # provider = aws.us-east-1
+  provider = aws.us-east-1
 
   name  = "apdev-waf"
-  scope = "REGIONAL"
-  # scope = "CLOUDFRONT"
+  # scope = "REGIONAL"
+  scope = "CLOUDFRONT"
 
   default_action {
     block {

@@ -51,16 +51,18 @@ resource "aws_vpc_endpoint" "s3_ep" {
     "Version" : "2012-10-17",
     "Statement" : [
       {
-        "Sid" : "AllowAll",
-        "Effect" : "Demy",
+        "Sid" : "deny-image",
+        "Effect" : "Deny",
         "Principal": "*",
         "Action" : "s3:*",
-        "Resource": "arn:aws:s3:::prod-us-east-1-starport-layer-bucket/*",
-        "Condition": {
-          "IpAddress": {
-            "aws:SourceIp": "${aws_instance.bastion.private_ip}/32"
-            }
-          }
+        "Resource": "arn:aws:s3:::prod-us-east-1-starport-layer-bucket/*"
+      },
+      {
+        "Sid" : "allow-s3",
+        "Effect" : "Deny",
+        "Principal": "*",
+        "Action" : "s3:*",
+        "Resource": "*"
       }
     ]
   })
