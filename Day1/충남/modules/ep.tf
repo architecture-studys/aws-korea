@@ -26,7 +26,7 @@ resource "aws_vpc_endpoint" "ecr" {
   service_name      = "com.amazonaws.us-east-1.ecr.dkr"
   vpc_endpoint_type = "Interface"
 
-  security_group_ids = [aws_security_group.ep.id]
+  security_group_ids = [aws_security_group.prod-ep.id]
   private_dns_enabled = true
 
   tags = {
