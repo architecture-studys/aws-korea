@@ -38,3 +38,35 @@ spec:
           value: "dbport"
         - name: MYSQL_DBNAME
           value: "dbname"
+        startupProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          timeoutSeconds: 10
+          failureThreshold: 12
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          timeoutSeconds: 10
+          failureThreshold: 3
+          successThreshold: 1
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          timeoutSeconds: 10
+          failureThreshold: 6
+          successThreshold: 1
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh","-c","sleep 30"]
+      terminationGracePeriodSeconds: 10

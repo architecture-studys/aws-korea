@@ -92,6 +92,13 @@ resource "aws_security_group" "bastion" {
     to_port = "443"
   }
 
+  egress {
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = "3306"
+    to_port = "3306"
+  }
+
     tags = {
     Name = "apdev-bastion-sg"
   }
