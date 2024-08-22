@@ -76,7 +76,7 @@ resource "aws_kms_key" "kms" {
     Name = "s3-kms"
   }
   depends_on = [
-    aws_cloudfront_distribution.cf
+    aws_cloudfront_distribution.cf_dist
   ]
 }
 
