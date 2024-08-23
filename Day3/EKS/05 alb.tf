@@ -130,18 +130,18 @@ resource "aws_lb_target_group" "token" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "employee" {
-  target_group_arn = aws_lb_target_group.employee.arn
-  target_id        = aws_instance.app1.id
-  port             = 8080
+# resource "aws_lb_target_group_attachment" "employee" {
+#   target_group_arn = aws_lb_target_group.employee.arn
+#   target_id        = aws_instance.app1.id
+#   port             = 8080
 
-  depends_on       = [aws_instance.app1]
-}
+#   depends_on       = [aws_instance.app1]
+# }
 
-resource "aws_lb_target_group_attachment" "token" {
-  target_group_arn = aws_lb_target_group.token.arn
-  target_id        = aws_instance.app2.id
-  port             = 8080
+# resource "aws_lb_target_group_attachment" "token" {
+#   target_group_arn = aws_lb_target_group.token.arn
+#   target_id        = aws_instance.app2.id
+#   port             = 8080
 
-  depends_on       = [aws_instance.app2]
-}
+#   depends_on       = [aws_instance.app2]
+# }
