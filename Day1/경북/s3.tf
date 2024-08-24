@@ -15,22 +15,22 @@ resource "aws_kms_key" "s3" {
         },
         Action   = "kms:*"
         Resource = "*"
-      },
-      {
-        Sid    = "AllowCloudFrontServicePrincipalSSE-KMS for home account"
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.s3_current.account_id}:root"
-          Service = "cloudfront.amazonaws.com"
-        },
-        Action = ["kms:Decrypt", "kms:Encrypt", "kms:GenerateDataKey*"]
-        Resource = "*"
-        Condition = {
-          StringEquals = {
-            "AWS:SourceArn" = "arn:aws:cloudfront::${data.aws_caller_identity.s3_current.account_id}:distribution/${aws_cloudfront_distribution.cf.id}"
-          }
-        }
       }
+      # {
+      #   Sid    = "AllowCloudFrontServicePrincipalSSE-KMS for home account"
+      #   Effect = "Allow"
+      #   Principal = {
+      #     AWS = "arn:aws:iam::${data.aws_caller_identity.s3_current.account_id}:root"
+      #     Service = "cloudfront.amazonaws.com"
+      #   },
+      #   Action = ["kms:Decrypt", "kms:Encrypt", "kms:GenerateDataKey*"]
+      #   Resource = "*"
+      #   Condition = {
+      #     StringEquals = {
+      #       "AWS:SourceArn" = "arn:aws:cloudfront::${data.aws_caller_identity.s3_current.account_id}:distribution/${aws_cloudfront_distribution.cf.id}"
+      #     }
+      #   }
+      # }
     ]
   })
 
