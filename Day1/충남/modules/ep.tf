@@ -59,7 +59,7 @@ resource "aws_vpc_endpoint" "s3_ep" {
       },
       {
         "Sid" : "allow-s3",
-        "Effect" : "Deny",
+        "Effect" : "Allow",
         "Principal": "*",
         "Action" : "s3:*",
         "Resource": "*"
