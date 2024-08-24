@@ -45,7 +45,7 @@ resource "aws_kms_alias" "s3" {
 }
 
 resource "aws_s3_bucket" "s3" {
-  bucket = "apne2-wsi-static-200"
+  bucket = "apne2-wsi-static-117"
 
   server_side_encryption_configuration {
     rule {
@@ -57,7 +57,7 @@ resource "aws_s3_bucket" "s3" {
   }
 
     tags = {
-        Name = "apne2-wsi-static-<비번호>"
+        Name = "apne2-wsi-static-117"
     }
 }
 
