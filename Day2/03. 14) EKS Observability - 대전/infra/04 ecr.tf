@@ -1,7 +1,7 @@
 resource "aws_ecr_repository" "ecr" {
-  name = "service"
+  name = "wsi-ecr"
   
   tags = {
-      Name = "service"
+      Name = "wsi-ecr"
   } 
 }

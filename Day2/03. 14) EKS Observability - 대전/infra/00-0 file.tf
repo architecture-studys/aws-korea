@@ -16,67 +16,18 @@ resource "aws_s3_bucket" "manifest" {
   force_destroy = true
 }
 
-resource "aws_s3_object" "service-a-Dockefile" {
+resource "aws_s3_object" "Dockefile" {
   bucket = aws_s3_bucket.app.id
-  key    = "/service-a/Dockerfile"
-  source = "./src/service-a/Dockerfile"
-  etag   = filemd5("./src/service-a/Dockerfile")
+  key    = "/Dockerfile"
+  source = "./src/Dockerfile"
+  etag   = filemd5("./src/Dockerfile")
 }
 
-resource "aws_s3_object" "service-a-python" {
+resource "aws_s3_object" "python" {
   bucket = aws_s3_bucket.app.id
-  key    = "/service-a/app.py"
-  source = "./src/service-a/app.py"
-  etag   = filemd5("./src/service-a/app.py")
-}
-
-resource "aws_s3_object" "service-a-requirements" {
-  bucket = aws_s3_bucket.app.id
-  key    = "/service-a/requirements.txt"
-  source = "./src/service-a/requirements.txt"
-  etag   = filemd5("./src/service-a/requirements.txt")
-}
-
-resource "aws_s3_object" "service-b-Dockefile" {
-  bucket = aws_s3_bucket.app.id
-  key    = "/service-b/Dockerfile"
-  source = "./src/service-b/Dockerfile"
-  etag   = filemd5("./src/service-b/Dockerfile")
-}
-
-resource "aws_s3_object" "service-b-python" {
-  bucket = aws_s3_bucket.app.id
-  key    = "/service-b/app.py"
-  source = "./src/service-b/app.py"
-  etag   = filemd5("./src/service-b/app.py")
-}
-
-resource "aws_s3_object" "service-c-Dockefile" {
-  bucket = aws_s3_bucket.app.id
-  key    = "/service-c/Dockerfile"
-  source = "./src/service-c/Dockerfile"
-  etag   = filemd5("./src/service-c/Dockerfile")
-}
-
-resource "aws_s3_object" "service-c-python" {
-  bucket = aws_s3_bucket.app.id
-  key    = "/service-c/app.py"
-  source = "./src/service-c/app.py"
-  etag   = filemd5("./src/service-c/app.py")
-}
-
-resource "aws_s3_object" "service-c-requirements" {
-  bucket = aws_s3_bucket.app.id
-  key    = "/service-c/requirements.txt"
-  source = "./src/service-c/requirements.txt"
-  etag   = filemd5("./src/service-c/requirements.txt")
-}
-
-resource "aws_s3_object" "service-b-requirements" {
-  bucket = aws_s3_bucket.app.id
-  key    = "/service-b/requirements.txt"
-  source = "./src/service-b/requirements.txt"
-  etag   = filemd5("./src/service-b/requirements.txt")
+  key    = "/app.py"
+  source = "./src/app.py"
+  etag   = filemd5("./src/app.py")
 }
 
 resource "aws_s3_object" "cluster" {

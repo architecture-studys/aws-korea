@@ -39,6 +39,8 @@ resource "aws_instance" "bastion" {
     source ~/.bashrc
     mkdir ~/image
     mkidr ~/eks
+    su - ec2-user -c 'sudo chown ec2-user:ec2-user ~/eks/'
+    su - ec2-user -c 'sudo chown ec2-user:ec2-user ~/image/'
     su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.app.id}/ ~/image --recursive'
     su - ec2-user -c 'aws s3 cp s3://${aws_s3_bucket.manifest.id}/ ~/eks --recursive'
     aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${data.aws_caller_identity.caller.account_id}.dkr.ecr.ap-northeast-2.amazonaws.com

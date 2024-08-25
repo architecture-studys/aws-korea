@@ -4,11 +4,11 @@ resource "tls_private_key" "rsa" {
 }
 
 resource "aws_key_pair" "keypair" {
-  key_name = "gwangju"
+  key_name = "wsi"
   public_key = tls_private_key.rsa.public_key_openssh
 }
 
 resource "local_file" "keypair" {
   content = tls_private_key.rsa.private_key_pem
-  filename = "./gwangju.pem"
+  filename = "./wsi.pem"
 }
