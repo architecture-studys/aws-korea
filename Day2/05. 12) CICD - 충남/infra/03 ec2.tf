@@ -29,7 +29,7 @@ resource "aws_instance" "bastion" {
     echo 'Skill53##' | passwd --stdin ec2-user
     echo 'Skill53##' | passwd --stdin root
     yum install -y git
-    echo "export AWS_DEFAULT_REGION=ap-northeast-2" >> ~/.bashrc
+    echo "export AWS_DEFAULT_REGION=us-west-1" >> ~/.bashrc
     source ~/.bashrc
     mkdir ~/wsc2024-cci
     sudo chown ec2-user:ec2-user ~/wsc2024-cci
