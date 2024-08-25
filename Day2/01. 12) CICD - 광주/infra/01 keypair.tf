@@ -9,6 +9,6 @@ resource "aws_key_pair" "gwangju-cicd-keypair" {
 }
 
 resource "local_file" "gwangju-cicd-keypair" {
-  content = tls_private_key.gwangju-cicd-keypair.private_key_pem
+  content = tls_private_key.gwangju-cicd-rsa.private_key_pem
   filename = "./gwangju.pem"
 }

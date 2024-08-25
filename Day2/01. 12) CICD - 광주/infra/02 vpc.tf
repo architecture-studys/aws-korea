@@ -28,7 +28,7 @@ resource "aws_route_table" "gwangju-cicd-public" {
 resource "aws_route" "gwangju-cicd-public" {
   route_table_id = aws_route_table.gwangju-cicd-public.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id = aws_internet_gateway.main.id
+  gateway_id = aws_internet_gateway.gwangju-cicd-main.id
 }
 
 resource "aws_subnet" "gwangju-cicd-public_a" {
