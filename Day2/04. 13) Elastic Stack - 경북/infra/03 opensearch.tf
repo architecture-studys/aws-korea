@@ -2,9 +2,9 @@ variable "domain" {
   default = "wsi-opensearch"
 }
 
-data "aws_region" "current" {}
+data "aws_region" "opensearch" {}
 
-data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "opensearch" {}
 
 data "aws_iam_policy_document" "opensearch" {
   statement {
@@ -16,7 +16,7 @@ data "aws_iam_policy_document" "opensearch" {
     }
 
     actions   = ["es:*"]
-    resources = ["arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${var.domain}/*"]
+    resources = ["arn:aws:es:${data.aws_region.opensearch.name}:${data.aws_caller_identity.opensearch.account_id}:domain/${var.domain}/*"]
   }
 }
 
